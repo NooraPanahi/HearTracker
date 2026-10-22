@@ -8,6 +8,7 @@ const result = document.getElementById("result");
 
 const startButton = document.getElementById("startButton");
 const stopButton = document.getElementById("stopButton");
+const resetButton = document.getElementById("resetButton");
 
 let audioURL = null;
 
@@ -115,8 +116,6 @@ audioPlayer.addEventListener("error", () => {
     }
 });
 
-
-// شروع آزمایش
 async function startTest() {
     if (!audioURL || isRunning || !audioPlayer.paused) {
         return;
@@ -140,6 +139,7 @@ async function startTest() {
 
         startButton.disabled = true;
         stopButton.disabled = false;
+        resetButton.disabled = true;
 
         audioStatus.textContent = "آزمایش در حال اجراست.";
 
@@ -148,8 +148,7 @@ async function startTest() {
     } catch (error) {
         console.error(error);
 
-        audioStatus.textContent =
-            "پخش فایل آغاز نشد. لطفاً فایل را بررسی کنید.";
+        audioStatus.textContent = "پخش فایل آغاز نشد. لطفاً فایل را بررسی کنید.";
     }
 }
 
@@ -173,15 +172,43 @@ function stopTest() {
 
     startButton.disabled = false;
     stopButton.disabled = true;
+    resetButton.disabled = false;
 
     audioStatus.textContent = "آزمایش متوقف شد.";
 
-    result.textContent =
-        `زمان نهایی آزمایش: ${formatTime(elapsedMs)}`;
+    result.textContent =  `زمان نهایی آزمایش: ${timerDisplay.textContent}`;
+}
+
+function resetTest () {
+    if (isRunning) {
+        return;
+    }
+
+    clearInterval(timerInterval);
+    timerInterval = null;
+
+    audioPlayer.pause();
+
+    if(audioURL) {
+        audioPlayer.currentTime = 0;
+    }
+
+    elapsedMs = 0;
+    startTime = null;
+    hasStarted = false;
+
+    timerDisplay.textContent = "00:00.00";
+
+    result.textContent = audioURL ? "فایل صوتی آماده پخش است." : "ابتدا یک فایل MP3 انتخاب کنید.";
+
+    startButton.disabled = !audioURL;
+    stopButton.disabled = true;
+    resetButton.disabled = true;
 }
 
 startButton.addEventListener("click", startTest);
 stopButton.addEventListener("click", stopTest);
+resetButton.addEventListener("click", resetTest);
 
 audioPlayer.addEventListener("ended", () => {
     if (isRunning) {
