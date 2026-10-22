@@ -33,12 +33,30 @@
 
         </section>
 
-        <section class="controls">
+        <div class="controls">
 
-            <button id="startButton" disabled> شروع آزمایش </button>
-            <button id="stopButton" disabled>  توقف آزمایش </button>
-            <button id="resetButton" disabled> آزمایش مجدد </button>
-        </section>
+            <button id="startButton" disabled> Start </button>
+            <button id="stopButton" disabled>  Stop </button>
+            <button id="resetButton" disabled> Reset </button>
+            <button id="resumeButton" disabled> Resume </button>
+            <button id="lapButton" disabled> lap </button>
+
+
+        </div>
+
+        <div class="lap-table-container">
+        <table id="lapTable">
+            <thead>
+                <tr>
+                    <th>Lap</th>
+                    <th>Lap Times</th>
+                    <th>Overall Time</th>
+                </tr>
+            </thead>
+            <tbody id="lapTableBody">
+            </tbody>
+        </table>
+    </div>
 
         <section class="result-section">
 

@@ -137,3 +137,51 @@ button:disabled {
         flex-direction: column;
     }
 }
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.controls button {
+    min-width: 85px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.controls button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.lap-table-container {
+    width: 100%;
+    margin-top: 24px;
+    overflow-x: auto;
+}
+
+#lapTable {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+#lapTable th,
+#lapTable td {
+    padding: 12px 8px;
+    border-bottom: 1px solid #ddd;
+}
+
+#lapTable th {
+    font-weight: bold;
+}
+
+#lapTable tbody tr:first-child {
+    font-weight: bold;
+}
