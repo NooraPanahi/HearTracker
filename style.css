@@ -1,0 +1,139 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Tahoma, Arial, sans-serif;
+    background: #f4f6f9;
+    color: #202938;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+}
+
+.container {
+    width: 100%;
+    max-width: 620px;
+    background: #ffffff;
+    padding: 32px;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.07);
+}
+
+h1 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    text-align: center;
+    font-size: 32px;
+}
+
+.description {
+    text-align: center;
+    color: #667085;
+    margin-bottom: 32px;
+}
+
+.upload-section,
+.player-section,
+.timer-section,
+.result-section {
+    margin-bottom: 24px;
+}
+
+.upload-section label {
+    display: block;
+    margin-bottom: 12px;
+    font-weight: bold;
+}
+
+input[type="file"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d0d5dd;
+    border-radius: 8px;
+    background: #fff;
+}
+
+#fileName,
+#audioStatus {
+    font-size: 14px;
+    color: #667085;
+    overflow-wrap: anywhere;
+}
+
+.timer-section {
+    text-align: center;
+    padding: 24px 12px;
+    background: #f4f6f9;
+    border-radius: 12px;
+}
+
+.timer-section p {
+    margin-top: 0;
+}
+
+#timer {
+    direction: ltr;
+    font-family: monospace;
+    font-size: clamp(32px, 8vw, 48px);
+    font-weight: bold;
+    font-variant-numeric: tabular-nums;
+}
+
+.controls {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 28px;
+}
+
+button {
+    flex: 1;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+#startButton {
+    background: #175cd3;
+    color: white;
+}
+
+#stopButton {
+    background: #d92d20;
+    color: white;
+}
+
+button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.result-section {
+    padding-top: 16px;
+    border-top: 1px solid #eaecf0;
+}
+
+.result-section h2 {
+    font-size: 18px;
+}
+
+#result {
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 20px;
+    }
+
+    .controls {
+        flex-direction: column;
+    }
+}

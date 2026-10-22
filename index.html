@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HearTrack | Audio Test</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="container">
+        <h1>HearTrack</h1>
+        <p class="description">  ابزار ثبت زمان رویدادهای صوتی </p>
+
+        <section class="upload-section">
+
+            <label for="audioFile"> انتخاب فایل صوتی </label>
+
+            <input type="file" id="audioFile" accept=".mp3,audio/mpeg" >
+
+            <p id="fileName"> هنوز فایلی انتخاب نشده است. </p>
+
+        </section>
+
+        <section class="player-section">
+            <audio id="audioPlayer" preload="metadata"></audio>
+            <p id="audioStatus"> ابتدا یک فایل انتخاب کنید.  </p>
+        </section>
+
+        <section class="timer-section">
+
+            <p>زمان سپری‌شده</p>
+            <div id="timer"> 00:00.000 </div>
+
+        </section>
+
+        <section class="controls">
+
+            <button id="startButton" disabled> شروع آزمایش </button>
+            <button id="stopButton" disabled>  توقف آزمایش </button>
+
+        </section>
+
+        <section class="result-section">
+
+            <h2>نتیجه آزمایش</h2>
+            <p id="result">  هنوز آزمایشی انجام نشده است. </p>
+
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
