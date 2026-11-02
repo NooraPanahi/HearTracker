@@ -206,17 +206,32 @@ function recordLap() {
     const overallMs = getCurrentElapsed();
     const lapMs = overallMs - lastLapMs;
 
+    const selectedChannel = audioChannel.value;
+
+    const channelNames = {
+        left: "Left Ear",
+        right: "Right Ear",
+        both: "Both Ears"
+    };
+
     const row = document.createElement("tr");
 
     const lapNumberCell = document.createElement("td");
+    const channelCell = document.createElement("td");
     const lapTimeCell = document.createElement("td");
     const overallTimeCell = document.createElement("td");
 
     lapNumberCell.textContent = lapTableBody.rows.length + 1;
+    channelCell.textContent = channelNames[selectedChannel];
     lapTimeCell.textContent = formatTime(lapMs);
     overallTimeCell.textContent = formatTime(overallMs);
 
-    row.append(lapNumberCell, lapTimeCell, overallTimeCell);
+    row.append(
+        lapNumberCell,
+        channelCell,
+        lapTimeCell,
+        overallTimeCell
+    );
 
     lapTableBody.prepend(row);
 
