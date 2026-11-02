@@ -24,6 +24,30 @@ let isRunning = false;
 let hasStarted = false;
 let lastLapMs = 0;
 
+const audioChannel = document.getElementById("audioChannel");
+
+const audioContext = new AudioContext();
+
+const source = audioContext.createMediaElementSource(audioPlayer);
+
+const panner = audioContext.createStereoPanner();
+
+source.connect(panner);
+panner.connect(audioContext.destination);
+
+audioChannel.addEventListener("change", () => {
+    switch (audioChannel.value) {
+        case "left":
+            panner.pan.value = -1;
+            break;
+        case "right":
+            panner.pan.value = 1;
+            break;
+        case "both":
+            panner.pan.value = 0;
+            break;
+    }
+});
 
 function formatTime(milliseconds) {
     const totalMs = Math.floor(milliseconds);
@@ -154,6 +178,7 @@ async function startTest() {
     audioPlayer.currentTime = 0;
 
     try {
+        await audioContext.resume();
         await audioPlayer.play();
 
         startTime = performance.now();
