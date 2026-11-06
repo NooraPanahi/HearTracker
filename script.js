@@ -7,10 +7,10 @@ const timerDisplay = document.getElementById("timer");
 const result = document.getElementById("result");
 
 const startButton = document.getElementById("startButton");
-const lapButton = document.getElementById("lapButton");
 const stopButton = document.getElementById("stopButton");
 const resumeButton = document.getElementById("resumeButton");
 const resetButton = document.getElementById("resetButton");
+const markButton = document.getElementById("markButton");
 
 const lapTableBody = document.getElementById("lapTableBody");
 
@@ -22,7 +22,6 @@ let timerInterval = null;
 
 let isRunning = false;
 let hasStarted = false;
-let lastLapMs = 0;
 
 const audioChannel = document.getElementById("audioChannel");
 
@@ -75,10 +74,10 @@ function updateTimer() {
 
 function setRunningButtons() {
     startButton.disabled = true;
-    lapButton.disabled = false;
     stopButton.disabled = false;
     resumeButton.disabled = true;
     resetButton.disabled = true;
+    markButton.disabled = false;
 }
 
 audioFile.addEventListener("change", () => {
@@ -104,17 +103,16 @@ audioFile.addEventListener("change", () => {
     hasStarted = false;
     startTime = null;
     elapsedMs = 0;
-    lastLapMs = 0;
 
     timerDisplay.textContent = "00:00.000";
     result.textContent = "هنوز آزمایشی انجام نشده است.";
     lapTableBody.replaceChildren();
 
     startButton.disabled = true;
-    lapButton.disabled = true;
     stopButton.disabled = true;
     resumeButton.disabled = true;
     resetButton.disabled = true;
+    markButton.disabled= true;
 
     const isMp3 = file.type === "audio/mpeg" || file.name.toLowerCase().endsWith(".mp3");
 
@@ -155,7 +153,6 @@ audioPlayer.addEventListener("error", () => {
     }
 
     startButton.disabled = true;
-    lapButton.disabled = true;
     stopButton.disabled = true;
     resumeButton.disabled = true;
 });
@@ -167,7 +164,6 @@ async function startTest() {
     }
 
     elapsedMs = 0;
-    lastLapMs = 0;
     startTime = null;
 
     timerDisplay.textContent = "00:00.000";
@@ -198,15 +194,12 @@ async function startTest() {
     }
 }
 
-function recordLap() {
+function markTime() {
     if (!isRunning) {
         return;
     }
 
-    const overallMs = getCurrentElapsed();
-    const lapMs = overallMs - lastLapMs;
-
-    const selectedChannel = audioChannel.value;
+    const recordedTime = getCurrentElapsed();
 
     const channelNames = {
         left: "Left Ear",
@@ -216,26 +209,19 @@ function recordLap() {
 
     const row = document.createElement("tr");
 
-    const lapNumberCell = document.createElement("td");
+    const numberCell = document.createElement("td");
     const channelCell = document.createElement("td");
-    const lapTimeCell = document.createElement("td");
-    const overallTimeCell = document.createElement("td");
+    const timeCell = document.createElement("td");
 
-    lapNumberCell.textContent = lapTableBody.rows.length + 1;
-    channelCell.textContent = channelNames[selectedChannel];
-    lapTimeCell.textContent = formatTime(lapMs);
-    overallTimeCell.textContent = formatTime(overallMs);
+    numberCell.textContent = lapTableBody.rows.length + 1;
 
-    row.append(
-        lapNumberCell,
-        channelCell,
-        lapTimeCell,
-        overallTimeCell
-    );
+    channelCell.textContent = channelNames[audioChannel.value];
+
+    timeCell.textContent = formatTime(recordedTime);
+
+    row.append(numberCell, channelCell, timeCell);
 
     lapTableBody.prepend(row);
-
-    lastLapMs = overallMs;
 }
 
 
@@ -257,10 +243,10 @@ function stopTest() {
     updateTimer();
 
     startButton.disabled = true;
-    lapButton.disabled = true;
     stopButton.disabled = true;
     resumeButton.disabled = false;
     resetButton.disabled = false;
+    markButton.disabled = true;
 
     audioStatus.textContent = "آزمایش متوقف شد.";
 
@@ -308,7 +294,6 @@ function resetTest() {
 
     elapsedMs = 0;
     startTime = null;
-    lastLapMs = 0;
     hasStarted = false;
     isRunning = false;
 
@@ -320,10 +305,11 @@ function resetTest() {
     audioStatus.textContent = audioURL ? "فایل آماده پخش است." : "ابتدا یک فایل MP3 انتخاب کنید.";
 
     startButton.disabled = !audioURL;
-    lapButton.disabled = true;
     stopButton.disabled = true;
     resumeButton.disabled = true;
     resetButton.disabled = true;
+    markButton.disabled = true;
+
 }
 
 audioPlayer.addEventListener("ended", () => {
@@ -342,10 +328,11 @@ audioPlayer.addEventListener("ended", () => {
     updateTimer();
 
     startButton.disabled = true;
-    lapButton.disabled = true;
     stopButton.disabled = true;
     resumeButton.disabled = true;
     resetButton.disabled = false;
+    markButton.disabled = true;
+
 
     audioStatus.textContent = "پخش فایل به پایان رسید.";
 
@@ -353,10 +340,10 @@ audioPlayer.addEventListener("ended", () => {
 });
 
 startButton.addEventListener("click", startTest);
-lapButton.addEventListener("click", recordLap);
 stopButton.addEventListener("click", stopTest);
 resumeButton.addEventListener("click", resumeTest);
 resetButton.addEventListener("click", resetTest);
+markButton.addEventListener("click", markTime);
 
 window.addEventListener("pagehide", () => {
     if (audioURL) {

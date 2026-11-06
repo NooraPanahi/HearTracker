@@ -44,30 +44,25 @@
         </div>
 
         <div class="controls">
-
-            <button id="startButton" disabled> Start </button>
-            <button id="stopButton" disabled>  Stop </button>
-            <button id="resetButton" disabled> Reset </button>
-            <button id="resumeButton" disabled> Resume </button>
-            <button id="lapButton" disabled> lap </button>
-
-
+            <button id="startButton">Start</button>
+            <button id="markButton" disabled>Mark Time</button>
+            <button id="stopButton" disabled>Stop</button>
+            <button id="resumeButton" disabled>Resume</button>
+            <button id="resetButton" disabled>Reset</button>
         </div>
 
         <div class="lap-table-container">
-        <table id="lapTable">
-            <thead>
-                <tr>
-                    <th>Lap</th>
-                    <th>Audio Channel</th>
-                    <th>Lap Times</th>
-                    <th>Overall Time</th>
-                </tr>
-            </thead>
-            <tbody id="lapTableBody">
-            </tbody>
-        </table>
-    </div>
+            <table id="lapTable">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Audio Channel</th>
+                        <th>Recorded Time</th>
+                    </tr>
+                </thead>
+                <tbody id="lapTableBody"></tbody>
+            </table>
+        </div>
 
         <section class="result-section">
 
