@@ -4,7 +4,6 @@ const audioPlayer = document.getElementById("audioPlayer");
 const fileName = document.getElementById("fileName");
 const audioStatus = document.getElementById("audioStatus");
 const timerDisplay = document.getElementById("timer");
-const result = document.getElementById("result");
 
 const startButton = document.getElementById("startButton");
 const stopButton = document.getElementById("stopButton");
@@ -13,6 +12,10 @@ const resetButton = document.getElementById("resetButton");
 const markButton = document.getElementById("markButton");
 
 const lapTableBody = document.getElementById("lapTableBody");
+
+const leftAverage = document.getElementById("leftAverage");
+const rightAverage = document.getElementById("rightAverage");
+const bothAverage = document.getElementById("bothAverage");
 
 let audioURL = null;
 
@@ -105,8 +108,11 @@ audioFile.addEventListener("change", () => {
     elapsedMs = 0;
 
     timerDisplay.textContent = "00:00.000";
-    result.textContent = "هنوز آزمایشی انجام نشده است.";
     lapTableBody.replaceChildren();
+
+    leftAverage.textContent = "--";
+    rightAverage.textContent = "--";
+    bothAverage.textContent = "--";
 
     startButton.disabled = true;
     stopButton.disabled = true;
@@ -130,13 +136,19 @@ audioFile.addEventListener("change", () => {
     audioPlayer.src = audioURL;
     audioPlayer.load();
 
-    audioStatus.textContent = "در حال بررسی فایل...";
+    audioPlayer.onloadedmetadata = () => {
+        audioStatus.textContent = "فایل صوتی آماده پخش است.";
+        startButton.disabled = false;
+    };
+
+    audioPlayer.onerror = () => {
+        audioStatus.textContent = "خطا در بارگذاری فایل صوتی.";
+        startButton.disabled = true;
+    };
 });
 
 audioPlayer.addEventListener("canplay", () => {
-    if (!audioURL) {
-        return;
-    }
+    if (!audioURL) return;
 
     audioStatus.textContent = "فایل آماده پخش است.";
 
@@ -167,9 +179,12 @@ async function startTest() {
     startTime = null;
 
     timerDisplay.textContent = "00:00.000";
-    result.textContent = "آزمایش در حال اجراست.";
 
     lapTableBody.replaceChildren();
+
+    leftAverage.textContent = "--";
+    rightAverage.textContent = "--";
+    bothAverage.textContent = "--";
 
     audioPlayer.currentTime = 0;
 
@@ -222,8 +237,54 @@ function markTime() {
     row.append(numberCell, channelCell, timeCell);
 
     lapTableBody.prepend(row);
+    calculateAverages();
 }
 
+function calculateAverages() {
+    let leftTimes = [];
+    let rightTimes = [];
+    let bothTimes = [];
+
+    Array.from(lapTableBody.rows).forEach(row => {
+        const channel = row.cells[1].textContent;
+        const timeText = row.cells[2].textContent;
+
+        const [minutes, rest] = timeText.split(":");
+        const [seconds, milliseconds] = rest.split(".");
+
+        const timeMs =
+            Number(minutes) * 60000 +
+            Number(seconds) * 1000 +
+            Number(milliseconds);
+
+        if (channel === "Left Ear") {
+            leftTimes.push(timeMs);
+        } else if (channel === "Right Ear") {
+            rightTimes.push(timeMs);
+        } else if (channel === "Both Ears") {
+            bothTimes.push(timeMs);
+        }
+    });
+
+    const calculateMean = times => {
+        if (times.length === 0) return null;
+
+        return times.reduce((sum, time) => sum + time, 0) / times.length;
+    };
+
+    const leftMean = calculateMean(leftTimes);
+    const rightMean = calculateMean(rightTimes);
+    const bothMean = calculateMean(bothTimes);
+
+    leftAverage.textContent =
+        leftMean !== null ? formatTime(leftMean) : "--";
+
+    rightAverage.textContent =
+        rightMean !== null ? formatTime(rightMean) : "--";
+
+    bothAverage.textContent =
+        bothMean !== null ? formatTime(bothMean) : "--";
+}
 
 function stopTest() {
     if (!isRunning) {
@@ -250,7 +311,6 @@ function stopTest() {
 
     audioStatus.textContent = "آزمایش متوقف شد.";
 
-    result.textContent = `زمان سپری‌شده: ${formatTime(elapsedMs)}`;
 }
 
 async function resumeTest() {
@@ -267,7 +327,6 @@ async function resumeTest() {
         setRunningButtons();
 
         audioStatus.textContent = "آزمایش ادامه دارد.";
-        result.textContent = "آزمایش در حال اجراست.";
 
         timerInterval = setInterval(updateTimer, 10);
 
@@ -300,8 +359,6 @@ function resetTest() {
     timerDisplay.textContent = "00:00.000";
     lapTableBody.replaceChildren();
 
-    result.textContent = audioURL ? "فایل صوتی آماده پخش است." : "ابتدا یک فایل MP3 انتخاب کنید.";
-
     audioStatus.textContent = audioURL ? "فایل آماده پخش است." : "ابتدا یک فایل MP3 انتخاب کنید.";
 
     startButton.disabled = !audioURL;
@@ -309,6 +366,10 @@ function resetTest() {
     resumeButton.disabled = true;
     resetButton.disabled = true;
     markButton.disabled = true;
+
+    leftAverage.textContent = "--";
+    rightAverage.textContent = "--";
+    bothAverage.textContent = "--";
 
 }
 
@@ -335,8 +396,6 @@ audioPlayer.addEventListener("ended", () => {
 
 
     audioStatus.textContent = "پخش فایل به پایان رسید.";
-
-    result.textContent = `زمان سپری‌شده: ${formatTime(elapsedMs)}`;
 });
 
 startButton.addEventListener("click", startTest);
