@@ -17,10 +17,13 @@ const leftAverage = document.getElementById("leftAverage");
 const rightAverage = document.getElementById("rightAverage");
 const bothAverage = document.getElementById("bothAverage");
 
+
+
+const startTimeInput = document.getElementById("startTimeInput");
+let selectedStartSeconds = 0;
+
 let audioURL = null;
 
-let startTime = null;
-let elapsedMs = 0;
 let timerInterval = null;
 
 let isRunning = false;
@@ -65,10 +68,10 @@ function formatTime(milliseconds) {
 }
 
 function getCurrentElapsed() {
-    if (isRunning && startTime !== null) {
-        return elapsedMs + (performance.now() - startTime);
-    }
-    return elapsedMs;
+    return Math.max(
+        0,
+        (audioPlayer.currentTime - selectedStartSeconds) * 1000
+    );
 }
 
 function updateTimer() {
@@ -81,6 +84,7 @@ function setRunningButtons() {
     resumeButton.disabled = true;
     resetButton.disabled = true;
     markButton.disabled = false;
+    startTimeInput.disabled = true;
 }
 
 audioFile.addEventListener("change", () => {
@@ -104,8 +108,6 @@ audioFile.addEventListener("change", () => {
 
     isRunning = false;
     hasStarted = false;
-    startTime = null;
-    elapsedMs = 0;
 
     timerDisplay.textContent = "00:00.000";
     lapTableBody.replaceChildren();
@@ -175,8 +177,16 @@ async function startTest() {
         return;
     }
 
-    elapsedMs = 0;
-    startTime = null;
+    selectedStartSeconds = Number(startTimeInput.value);
+
+    if (
+        !Number.isFinite(selectedStartSeconds) ||
+        selectedStartSeconds < 0 ||
+        selectedStartSeconds >= audioPlayer.duration
+    ) {
+        audioStatus.textContent = "زمان شروع واردشده معتبر نیست.";
+        return;
+    }
 
     timerDisplay.textContent = "00:00.000";
 
@@ -186,17 +196,19 @@ async function startTest() {
     rightAverage.textContent = "--";
     bothAverage.textContent = "--";
 
-    audioPlayer.currentTime = 0;
+    audioPlayer.currentTime = selectedStartSeconds;
 
     try {
         await audioContext.resume();
+
         await audioPlayer.play();
 
-        startTime = performance.now();
         isRunning = true;
         hasStarted = true;
 
         setRunningButtons();
+
+        startTimeInput.disabled = true;
 
         audioStatus.textContent = "آزمایش در حال اجراست.";
 
@@ -208,7 +220,6 @@ async function startTest() {
         audioStatus.textContent = "پخش فایل آغاز نشد. لطفاً فایل را بررسی کنید.";
     }
 }
-
 function markTime() {
     if (!isRunning) {
         return;
@@ -291,10 +302,7 @@ function stopTest() {
         return;
     }
 
-    elapsedMs = getCurrentElapsed();
-
     isRunning = false;
-    startTime = null;
 
     audioPlayer.pause();
 
@@ -321,7 +329,6 @@ async function resumeTest() {
     try {
         await audioPlayer.play();
 
-        startTime = performance.now();
         isRunning = true;
 
         setRunningButtons();
@@ -351,8 +358,6 @@ function resetTest() {
         audioPlayer.currentTime = 0;
     }
 
-    elapsedMs = 0;
-    startTime = null;
     hasStarted = false;
     isRunning = false;
 
@@ -371,6 +376,8 @@ function resetTest() {
     rightAverage.textContent = "--";
     bothAverage.textContent = "--";
 
+    startTimeInput.disabled = false;
+
 }
 
 audioPlayer.addEventListener("ended", () => {
@@ -378,10 +385,7 @@ audioPlayer.addEventListener("ended", () => {
         return;
     }
 
-    elapsedMs = getCurrentElapsed();
-
     isRunning = false;
-    startTime = null;
 
     clearInterval(timerInterval);
     timerInterval = null;
